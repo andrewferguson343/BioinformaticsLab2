@@ -1,5 +1,5 @@
 ########################################################
-# Name:
+# Name: Andrew Ferguson
 # CSC-315
 # Lab #2: Graphical and Numerical Summaries of Data
 ########################################################
@@ -22,19 +22,30 @@
 #   download the file to your current working directory and then
 #   read it into R
 
+library(readxl)
+url <- "https://gdancik.github.io/CSC-315/data/datasets/csc-315_survey.xlsx"
+destfile <- "csc_315_survey.xlsx"
+curl::curl_download(url, destfile)
+csc_315_survey <- read_excel(destfile)
+survey <- csc_315_survey
 
 # 2. How many students completed the survey?
-
-
+nrow(survey)
+  
 # 3. How many questions were asked (i.e., how many columns are there)?
-
+ncol(survey)
 
 # 4. Construct a frequency bar graph for the response to "Are you a cat or a dog person?",
 #    where the bars are colored in using the default colors. Remove the legend by 
 #    adding the following component to the end of your 
 #    ggplot() code: theme(legend.position = "none")
-
-
+library(ggplot2)
+catOrDog <- data.frame(survey$CatOrDogPerson)
+g <- ggplot(catOrDog, aes(x="animal", y="count")) +
+  geom_col(aes(fill = catOrDog)) +
+  ggtitle("Petal Length vs. Petal Width from Iris dataset") +
+  labs(x = "Petal Width", y = "Petal Length")
+print(g)
 # 5. Construct a relative frequency table for favorite CSC course. Because
 #  the data is not consistent, first run the code below so that
 #  courses are in a consistent notation. This code assumes the data 
@@ -90,7 +101,8 @@ survey$Favorite.CSC.Course <- courses
 #    should reflect this, rather than, e.g., saying TRUE or FALSE. Since the frequency
 #    table is stored as a vector, change the names using the names() function.
 
-
+alcTable <- table(survey$Alcohol > 0)
+alcTable
 
 # 8. Out of the "Cat" people in this class, what has been their favorite
 #    CSC course so far? Answer this question by first creating a new
