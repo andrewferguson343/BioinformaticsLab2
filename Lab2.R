@@ -113,28 +113,81 @@ alcTable
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # 9. Construct a histogram for Alchol consumption, by using the hist() function with the argument
 #    breaks = 14 to set the number of groupings. Describe the shape of its distribution. 
 #    Is it unimodal, bimodal, or flat. Is it skewed right, skewed left, or symmetric?
+
+hist(survey$Alcohol, breaks = 14)
+#This graph is unimodal skewed right
 
 
 # 10. Calculate the mean and median for Alcohol consumption. 
 #    Which is a better measure of averages? (Note: although these numbers are similar,
 #    one would still be considered better than the other -- why?)
-
+alcoholConsump <- survey$Alcohol 
+mean(alcoholConsump)
+median(alcoholConsump)
 
 # 11. What is the 75th percentile for HS GPA??
-
+hsGPA <-  survey$HS.GPA
+quantile(hsGPA, .75)
 # 12. Ten percent of indivduals have HS GPAs above what value?
-
+quantile(hsGPA, .9)
 # 13. Create side-by-side boxplots showing the average hours of sleep based on
 #     whether a person is a cat or dog person.  Does there appear 
 #     to be a significant difference in the GPAs between these 
 #     groups? Are there any outliers? If so, how many?
 
 
+
 # 14. For college GPA, what is the variance and standard deviation?
-
-
+colgpa <- survey$College.GPA
+colgpa
+var(colgpa)
+sd(colgpa)
 # 15. Create a vector with 20 values that has a standard deviation of 0.
-
+vec <- rep(20,20)
+vec
+sd(vec)
