@@ -25,7 +25,6 @@
 library(readxl)
 url <- "https://gdancik.github.io/CSC-315/data/datasets/csc-315_survey.xlsx"
 destfile <- "csc_315_survey.xlsx"
-curl::curl_download(url, destfile)
 csc_315_survey <- read_excel(destfile)
 survey <- csc_315_survey
 
@@ -40,12 +39,17 @@ ncol(survey)
 #    adding the following component to the end of your 
 #    ggplot() code: theme(legend.position = "none")
 library(ggplot2)
-catOrDog <- data.frame(survey$CatOrDogPerson)
-g <- ggplot(catOrDog, aes(x="animal", y="count")) +
-  geom_col(aes(fill = catOrDog)) +
-  ggtitle("Petal Length vs. Petal Width from Iris dataset") +
-  labs(x = "Petal Width", y = "Petal Length")
+catOrDog <-  table(survey$CatOrDogPerson)
+catOrDog
+catOrDog <- data.frame(catOrDog)
+
+g <- ggplot(catOrDog, aes(x = catOrDog$Var1, y= catOrDog$Freq)) +
+geom_col(aes(fill = catOrDog$Var1)) +
+ggtitle("Cat or dog person") +
+labs(x = "Animal", y = "NumberOfStudents")+
+theme(legend.position = "none")
 print(g)
+
 # 5. Construct a relative frequency table for favorite CSC course. Because
 #  the data is not consistent, first run the code below so that
 #  courses are in a consistent notation. This code assumes the data 
@@ -90,9 +94,15 @@ courses <- gsub("csc ?", "csc-", courses)
 
 # reassign courses to the survey
 survey$Favorite.CSC.Course <- courses
-
-
+CoursesTable <-  table(courses)
+CoursesTable
 # 6. Construct a Pareto Chart for favorite CSC course
+coursesData = data.frame(CoursesTable)
+coursesData
+ggplot(coursesData ,aes(x= CoursesTable, y=Freq)) + 
+  geom_col(aes(fill = coursesData$courses)) +
+  ggtitle("Favorite Class of Students") +
+  labs(x = "Favorite Class", y = "Frequency")
 
 # 7. Construct a relative frequency table for whether or not a student consumes alcohol
 #    at least 1 day per week, on average (i.e., consumes alcohol > 0 days per week). 
@@ -101,7 +111,9 @@ survey$Favorite.CSC.Course <- courses
 #    should reflect this, rather than, e.g., saying TRUE or FALSE. Since the frequency
 #    table is stored as a vector, change the names using the names() function.
 
-alcTable <- table(survey$Alcohol > 0)
+survey$Alcohol
+alcTable <- table(survey$Alcohol > 0) / sum(table(survey$Alcohol))
+names(alcTable) <- c("Drinks", "Does Not Drink")
 alcTable
 
 # 8. Out of the "Cat" people in this class, what has been their favorite
@@ -110,50 +122,17 @@ alcTable
 #    for favorite programming language. Then answer the same question for "Dog" 
 #    people. What do you conclude about the favorite course for cat and dog people (for 
 #    students in this class) based on this data?
+library(dplyr)
+catPeople <-filter(survey, CatOrDogPerson == "Cat")
+CatPeople.class <- table(catPeople$Favorite.CSC.Course) /sum(table(catPeople$Favorite.CSC.Course))
+CatPeople.class
 
+dogPeople <-filter(survey, CatOrDogPerson == "Dog")
+dogPeople.class <- table(dogPeople$Favorite.CSC.Course) /sum(table(dogPeople$Favorite.CSC.Course))
+dogPeople.class
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# The highest percentage of cat people chose csc-314 as their favorite class. The most popular class among dog people is tied
+# between csc 270 and csc 210
 
 # 9. Construct a histogram for Alchol consumption, by using the hist() function with the argument
 #    breaks = 14 to set the number of groupings. Describe the shape of its distribution. 
@@ -170,6 +149,10 @@ alcoholConsump <- survey$Alcohol
 mean(alcoholConsump)
 median(alcoholConsump)
 
+#The mean would be a better indication of average. If we used the
+#median it would seem as if nobody in the class drinks.
+
+
 # 11. What is the 75th percentile for HS GPA??
 hsGPA <-  survey$HS.GPA
 quantile(hsGPA, .75)
@@ -180,14 +163,21 @@ quantile(hsGPA, .9)
 #     to be a significant difference in the GPAs between these 
 #     groups? Are there any outliers? If so, how many?
 
+s = split(survey$HoursOfSleep, survey$CatOrDogPerson)
 
+boxplot(s, ylab = "Hours of Sleep", col = c("pink", "blue"), 
+        main = "hours of sleep by preferred pet")
+
+gpa <- split(survey$College.GPA, survey$CatOrDogPerson)
+boxplot(gpa, ylab = "GPA", col = c("pink", "blue"), 
+        main = "GPA by preferred pet")
+#For Gpa the median gpa is higher than the median gpa of dog people, but cat people have a much larger spread. Dog people seem to be consistently above a 3.0 GPA.
+#For Hours of sleep, the median is almost excatly even with dog people having a higher spread. There is one outlier on the lower end of the dog people graph.
 
 # 14. For college GPA, what is the variance and standard deviation?
 colgpa <- survey$College.GPA
-colgpa
 var(colgpa)
 sd(colgpa)
 # 15. Create a vector with 20 values that has a standard deviation of 0.
 vec <- rep(20,20)
-vec
 sd(vec)
